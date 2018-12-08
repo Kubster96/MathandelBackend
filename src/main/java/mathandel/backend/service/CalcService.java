@@ -56,7 +56,7 @@ public class CalcService {
         this.userRepository = userRepository;
     }
 
-    @Transactional
+
     public EditionTO resolveEdition(Long userId, Long editionId) {
         User moderator = userRepository.findById(userId).orElseThrow(() -> new AppException("User does not exist"));
         Edition edition = editionRepository.findById(editionId).orElseThrow(() -> new ResourceNotFoundException("Edition", "id", editionId));
@@ -68,12 +68,17 @@ public class CalcService {
         if (!(editionStatusName.equals(OPENED) || editionStatusName.equals(FAILED) || editionStatusName.equals(CLOSED))) {
             throw new BadRequestException("You cannot resolve edition with edition status " + editionStatusName);
         }
-        calculateResults(edition);
-        edition = editionRepository.findById(editionId).orElseThrow(() -> new ResourceNotFoundException("Edition", "id", editionId));
-        return mapEdition(edition, userId);
+        Edition resolved = calculateResults(edition);
+        editionRepository.save(resolved);
+        if(resolved.getEditionStatusType().getEditionStatusName().equals(CLOSED)) {
+            return mapEdition(edition, userId);
+        } else {
+            throw new AppException("Server had a problem with calculating result for your edition. Try again later.");
+        }
     }
 
-    public void calculateResults(Edition edition) {
+    @Transactional
+    public Edition calculateResults(Edition edition) {
         EditionStatusName editionStatusName = edition.getEditionStatusType().getEditionStatusName();
 
         if (editionStatusName.equals(CLOSED)) {
@@ -91,10 +96,9 @@ public class CalcService {
         try {
             String result = restTemplate.postForObject(CALC_SERVICE_URL + "/solve/", httpEntity, String.class);
             saveResultsFromJsonData(edition.getId(), result);
-            editionService.changeEditionStatus(edition, CLOSED);
+            return editionService.changeEditionStatus(edition, CLOSED);
         } catch (Exception e) {
-            editionService.changeEditionStatus(edition, FAILED);
-            throw new AppException("Server had a problem with calculating result for your edition. Try again later.");
+            return editionService.changeEditionStatus(edition, FAILED);
         }
     }
 

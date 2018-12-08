@@ -1,5 +1,5 @@
-GET http://localhost:8080/api/users/2
+GET http://localhost:8080/api/users/1
 Content-Type: Application/Json
-Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNTQyOTE5MzU2LCJleHAiOjE1NDM1MjQxNTZ9.zsMM5CBlHrHablcjlZJcu4Nk1Aics0LkKIPG2xSmt337qfbClFL9g-rEYnPiHXzjJhlrsG2bEQ6NKAzIXf9v1w
+Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNTQ0MDUyODAyLCJleHAiOjE1NDQ2NTc2MDJ9.IWNk84_bsA6nEkAVPQ91jYB5vbzb0Y548rRm7XooLYfUpqgV9AbkXVooG73RcAdVpXv3HzvLsfaUdrZ2pjQTow
 
 ###
