@@ -68,24 +68,20 @@ public class CalcService {
         if (!(editionStatusName.equals(OPENED) || editionStatusName.equals(FAILED) || editionStatusName.equals(CLOSED))) {
             throw new BadRequestException("You cannot resolve edition with edition status " + editionStatusName);
         }
-        Edition resolved = calculateResults(edition);
-        editionRepository.save(resolved);
-        if(resolved.getEditionStatusType().getEditionStatusName().equals(CLOSED)) {
-            return mapEdition(edition, userId);
-        } else {
-            throw new AppException("Server had a problem with calculating result for your edition. Try again later.");
-        }
+
+        edition = editionService.changeEditionStatus(edition, PENDING);
+
+        ResultCalculator resultCalculator = new ResultCalculator(resultRepository, CALC_SERVICE_TOKEN, restTemplate, edition, CALC_SERVICE_URL, editionService, preferenceRepository, definedGroupRepository, itemRepository, editionRepository);
+        Thread resultCalculatorThread = new Thread(resultCalculator);
+        resultCalculatorThread.start();
+
+        return mapEdition(edition, userId);
     }
 
     @Transactional
     public Edition calculateResults(Edition edition) {
-        EditionStatusName editionStatusName = edition.getEditionStatusType().getEditionStatusName();
 
-        if (editionStatusName.equals(CLOSED)) {
-            resultRepository.deleteAllByEdition_Id(edition.getId());
-        }
-
-        editionService.changeEditionStatus(edition, PENDING);
+        resultRepository.deleteAllByEdition_Id(edition.getId());
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json");

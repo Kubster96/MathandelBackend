@@ -21,10 +21,10 @@ public class Preference {
     @OneToOne
     private Item haveItem;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private Set<Item> wantedItems = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private Set<DefinedGroup> wantedDefinedGroups = new HashSet<>();
 
     @ManyToOne

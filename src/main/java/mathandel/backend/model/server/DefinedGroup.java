@@ -27,7 +27,7 @@ public class DefinedGroup {
     @ManyToOne
     private User user;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private Set<Item> items = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
