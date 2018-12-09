@@ -4,12 +4,17 @@ import mathandel.backend.model.server.*;
 import mathandel.backend.model.server.enums.EditionStatusName;
 import mathandel.backend.model.server.enums.RoleName;
 import mathandel.backend.repository.*;
+import org.apache.commons.io.FileUtils;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -27,6 +32,7 @@ public class MathandelDataPopulator {
     private RoleRepository roleRepository;
     private EditionRepository editionRepository;
     private EditionStatusTypeRepository editionStatusTypeRepository;
+    private ImageRepository imageRepository;
 
     private Set<String> userNames = new HashSet<>();
     private Set<ItemData> items = new HashSet<>();
@@ -40,7 +46,10 @@ public class MathandelDataPopulator {
     private long lEndTime;
     private long output;
 
-    public MathandelDataPopulator(PasswordEncoder passwordEncoder, UserRepository userRepository, ItemRepository itemRepository, DefinedGroupRepository definedGroupRepository, PreferenceRepository preferenceRepository, RoleRepository roleRepository, EditionRepository editionRepository, EditionStatusTypeRepository editionStatusTypeRepository) {
+    @Value("${images.already.downloaded}")
+    private boolean imagesDownloaded;
+
+    public MathandelDataPopulator(PasswordEncoder passwordEncoder, UserRepository userRepository, ItemRepository itemRepository, DefinedGroupRepository definedGroupRepository, PreferenceRepository preferenceRepository, RoleRepository roleRepository, EditionRepository editionRepository, EditionStatusTypeRepository editionStatusTypeRepository, ImageRepository imageRepository) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.itemRepository = itemRepository;
@@ -49,6 +58,7 @@ public class MathandelDataPopulator {
         this.roleRepository = roleRepository;
         this.editionRepository = editionRepository;
         this.editionStatusTypeRepository = editionStatusTypeRepository;
+        this.imageRepository = imageRepository;
     }
 
     public void saveItemsFromFile(String fileName) throws IOException {
@@ -312,6 +322,32 @@ public class MathandelDataPopulator {
 
     private String getDefinedGroupName(String s) {
         return s.replace("%", "");
+    }
+
+    public void saveImagesFromUrls(String populateMathandelImageUrlsWithIds) {
+        try {
+            String content = FileUtils.readFileToString(new File(populateMathandelImageUrlsWithIds));
+            JSONObject jsonObject = new JSONObject(content);
+            jsonObject.keySet().forEach(itemId -> {
+                try {
+                    String fileName = itemId + ".jpg";
+                    if (!imagesDownloaded) {
+                        FileUtils.copyURLToFile(new URL(jsonObject.getString(itemId)), new File("src/main/resources/images/" + fileName));
+                    }
+                    Item item = itemRepository.findById(Long.parseLong(itemId)).get();
+                    Image image = imageRepository.save(new Image().setName(fileName));
+                    item.getImages().add(image);
+                    itemRepository.save(item);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private class ItemData {

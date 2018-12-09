@@ -26,7 +26,7 @@ public class Item {
     @ManyToOne
     private Edition edition;
 
-    @OneToMany(cascade = {CascadeType.ALL})
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Set<Image> images = new HashSet<>();
 
     public Item() {

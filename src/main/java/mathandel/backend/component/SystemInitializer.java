@@ -34,6 +34,9 @@ public class SystemInitializer implements ApplicationRunner {
     @Value("${populate.mathandel.items.data.file.path}")
     private String populateMathandelItemsDataFilePath;
 
+    @Value("${populate.mathandel.items.with.urls}")
+    private String populateMathandelImageUrlsWithIds;
+
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -67,6 +70,9 @@ public class SystemInitializer implements ApplicationRunner {
             try {
                 mathandelDataPopulator.saveItemsFromFile(populateMathandelItemsDataFilePath);
                 long lStartTime = System.nanoTime();
+
+                mathandelDataPopulator.saveImagesFromUrls(populateMathandelImageUrlsWithIds);
+
                 mathandelDataPopulator.saveFromFile(populateMathandelDataFilePath);
                 long lEndTime = System.nanoTime();
                 long output = lEndTime - lStartTime;
@@ -76,8 +82,6 @@ public class SystemInitializer implements ApplicationRunner {
             }
         }
 
-//        testPopulator.populate(); // -> if you want to use this go to TestPopulator class
-//        fullDBPopulator.populate();
     }
 
     private void insertRolesToDB() {
