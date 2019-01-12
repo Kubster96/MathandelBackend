@@ -14,8 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.validation.Valid;
 
-import static mathandel.backend.utils.UrlPaths.signInPath;
-import static mathandel.backend.utils.UrlPaths.signUpPath;
+import static mathandel.backend.utils.UrlPaths.*;
 
 @Controller
 public class AuthController {
@@ -41,17 +40,16 @@ public class AuthController {
     }
 
     // documented
-    @PostMapping("/api/facebookSignIn")
+    @PostMapping(facebookSignIn)
     public @ResponseBody
     FacebookResponse facebookSignIn(@Valid @RequestBody SignInFacebookRequest signInFacebookRequest) {
         return authService.facebookSignIn(signInFacebookRequest);
     }
 
     // documented
-    @PostMapping("/api/facebookSignUp")
+    @PostMapping(facebookSignUp)
     public @ResponseBody
     FacebookResponse facebookSignUp(@Valid @RequestBody SignUpFacebookRequest signUpFacebookRequest) {
-
         return authService.facebookSignUp(signUpFacebookRequest);
     }
 }

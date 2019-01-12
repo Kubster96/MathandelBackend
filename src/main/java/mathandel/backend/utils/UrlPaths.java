@@ -9,6 +9,10 @@ public class UrlPaths {
     public static final String signInPath = authPath + "/signIn";
     // /api/auth/signUp
     public static final String signUpPath = authPath + "/signUp";
+    // /api/auth/facebookSignUp
+    public static final String facebookSignUp = authPath + "/facebookSignUp";
+    // /api/auth/facebookSignIn
+    public static final String facebookSignIn = authPath + "/facebookSignIn";
 
     // /api/editions
     public static final String editionsPath = "/api/editions";
