@@ -76,7 +76,7 @@ public class SystemInitializer implements ApplicationRunner {
                 mathandelDataPopulator.saveFromFile(populateMathandelDataFilePath);
                 long lEndTime = System.nanoTime();
                 long output = lEndTime - lStartTime;
-                System.out.println("POPULATOR TERMINATED WITH TIME -- " + output / 1000000000);
+                System.out.println("POPULATOR FINISHED WITH TIME -- " + output / 1000000000);
             } catch (IOException e) {
                 e.printStackTrace();
             }
