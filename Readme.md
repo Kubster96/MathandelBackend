@@ -2,7 +2,7 @@
 
 # Mathandel Backend
 
-Repository for Bacheler's of science degree project
+Repository for Bachelor's of science thesis project
 
 ## Database setup
 
