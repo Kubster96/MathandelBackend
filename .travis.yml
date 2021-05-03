@@ -8,9 +8,6 @@ jdk:
    - oraclejdk8
 
 before_install:
-   - sudo apt-get update
-   - sudo apt-get install gradle
-   - chmod a+x gradlew
    - mysql -u root -e 'CREATE DATABASE dbMathandel;'
    - mysql -u root -e 'CREATE DATABASE dbMathandelTest;'
    - mysql -u root -e "CREATE USER 'MathandelUser'@'localhost' IDENTIFIED BY 'MathandelRulez';"
